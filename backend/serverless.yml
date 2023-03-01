@@ -8,6 +8,9 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
 
+package:
+  individually: true
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -47,14 +50,24 @@ functions:
 
   # TODO: Configure this function -
   # Provide iamRoleStatements property for performing Actions on DynamoDB
-  # GetTodos:
-  #   handler: src/lambda/http/getTodos.handler
-  #   events:
-  #     - http:
-  #         method: get
-  #         path: todos
-  #         cors: true
-  #         authorizer: Auth
+  GetTodos:
+    handler: src/lambda/http/getTodos.handler
+    events:
+      - http:
+          method: get
+          path: todos
+          cors: true
+          authorizer: Auth
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.TODOS_CREATED_AT_INDEX}
 
   # TODO: Configure this function -
   # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
@@ -69,9 +82,12 @@ functions:
           path: todos
           cors: true
           authorizer: Auth
-    # request:
-    #   schemas:
-    #     application/json: ${file(models/create-todo-model.json)}
+          request:
+            schemas:
+              application/json:
+                schema: ${file(models/create-todo-model.json)}
+                name: TodoCreateModel
+                description: 'Validation model for Creating Todos'
     iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: Allow
