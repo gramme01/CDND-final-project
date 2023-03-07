@@ -52,3 +52,11 @@ export async function updateTodo(
     logger.info('Update Todo');
     return await todosAccess.updateTodoItem(userId, todoId, todoChange);
 }
+
+export async function deleteTodo(
+    userId: string,
+    todoId: string
+) {
+    logger.info('Delete Todo');
+    return await todosAccess.deleteTodoItem(userId, todoId);
+}
