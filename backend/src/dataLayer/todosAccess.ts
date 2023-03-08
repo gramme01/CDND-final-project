@@ -3,14 +3,14 @@ import * as AWSXRay from 'aws-xray-sdk';
 
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { TodoItem } from '../models/TodoItem';
-// import { TodoUpdate } from '../models/TodoUpdate';
+import { TodoUpdate } from '../models/TodoUpdate';
 import { createLogger } from '../utils/logger';
 
 const XAWS = AWSXRay.captureAWS(AWS);
 
 const logger = createLogger('TodosAccess');
 
-// TODO: Implement the dataLayer logic
+
 
 export class TodosAccess {
     constructor(
@@ -44,6 +44,40 @@ export class TodosAccess {
         }).promise();
 
         return todoItem;
+    }
+
+    async updateTodoItem(userId: string, todoId: string, todoUpdate: TodoUpdate) {
+        logger.info(`Updating todo with id ${todoId}`);
+
+        const result = await this.docClient.update({
+            TableName: this.todosTable,
+            Key: { userId, todoId },
+            UpdateExpression: 'SET #todoName = :name, dueDate = :dueDate, done = :done',
+            ExpressionAttributeNames: {
+                '#todoName': 'name'
+            },
+            ExpressionAttributeValues: {
+                ':name': todoUpdate.name,
+                ':dueDate': todoUpdate.dueDate,
+                ':done': todoUpdate.done
+            },
+            ReturnValues: 'UPDATED_NEW'
+        }).promise();
+
+        logger.info(`${todoId} has been updated to ${result}`);
+
+    }
+
+    async deleteTodoItem(userId: string, todoId: string,) {
+        logger.info(`Deleting todo with id ${todoId}`);
+
+        const result = await this.docClient.delete({
+            TableName: this.todosTable,
+            Key: { userId, todoId },
+            ReturnValues: 'ALL_OLD'
+        }).promise();
+
+        logger.info(`Delete Complete ${result}`);
     }
 }
 
