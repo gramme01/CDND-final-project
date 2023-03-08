@@ -60,3 +60,11 @@ export async function deleteTodo(
     logger.info('Delete Todo');
     return await todosAccess.deleteTodoItem(userId, todoId);
 }
+
+export async function createAttachmentPresignedUrl(
+    todoId: string
+): Promise<string> {
+    logger.info('Create Attachment Presigned URL');
+    const uploadUrl = await attachmentUtils.getUploadUrl(todoId);
+    return uploadUrl;
+}
