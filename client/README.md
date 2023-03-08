@@ -1,5 +1,10 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Run scripts with Node v14
+
+`nvm install 14`
+`nvm use 14 `
+
 ## Available Scripts
 
 In the project directory, you can run:
