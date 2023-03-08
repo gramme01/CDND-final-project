@@ -68,6 +68,19 @@ export class TodosAccess {
 
     }
 
+    async updateAttachmentUrl(userId: string, todoId: string, attachmentUrl: string) {
+        logger.info(`Updating attachment URL for todo with id ${todoId}`);
+
+        await this.docClient.update({
+            TableName: this.todosTable,
+            Key: { userId, todoId },
+            UpdateExpression: 'SET attachmentUrl = :attachmentUrl',
+            ExpressionAttributeValues: {
+                ':attachmentUrl': attachmentUrl
+            }
+        }).promise();
+    }
+
     async deleteTodoItem(userId: string, todoId: string,) {
         logger.info(`Deleting todo with id ${todoId}`);
 
