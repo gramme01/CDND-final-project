@@ -46,10 +46,10 @@ export class TodosAccess {
         return todoItem;
     }
 
-    async updateTodoItem(userId: string, todoId: string, todoUpdate: TodoUpdate): Promise<TodoUpdate> {
+    async updateTodoItem(userId: string, todoId: string, todoUpdate: TodoUpdate) {
         logger.info(`Updating todo with id ${todoId}`);
 
-        await this.docClient.update({
+        const result = await this.docClient.update({
             TableName: this.todosTable,
             Key: { userId, todoId },
             UpdateExpression: 'SET #todoName = :name, dueDate = :dueDate, done = :done',
@@ -63,8 +63,21 @@ export class TodosAccess {
             },
             ReturnValues: 'UPDATED_NEW'
         }).promise();
-        // TODO: Update expression 5 - 48:32
-        return todoUpdate;
+
+        logger.info(`${todoId} has been updated to ${result}`);
+
+    }
+
+    async deleteTodoItem(userId: string, todoId: string,) {
+        logger.info(`Deleting todo with id ${todoId}`);
+
+        const result = await this.docClient.delete({
+            TableName: this.todosTable,
+            Key: { userId, todoId },
+            ReturnValues: 'ALL_OLD'
+        }).promise();
+
+        logger.info(`Delete Complete ${result}`);
     }
 }
 

@@ -4,7 +4,7 @@ import * as AWSXRay from 'aws-xray-sdk';
 const XAWS = AWSXRay.captureAWS(AWS);
 
 const s3BucketName = process.env.ATTACHMENT_S3_BUCKET;
-const urlExpiration = process.env.SIGNED_URL_EXPIRATION;
+const urlExpiration = +process.env.SIGNED_URL_EXPIRATION;
 
 export class AttachmentUtils {
     constructor(

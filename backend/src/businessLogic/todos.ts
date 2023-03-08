@@ -52,3 +52,19 @@ export async function updateTodo(
     logger.info('Update Todo');
     return await todosAccess.updateTodoItem(userId, todoId, todoChange);
 }
+
+export async function deleteTodo(
+    userId: string,
+    todoId: string
+) {
+    logger.info('Delete Todo');
+    return await todosAccess.deleteTodoItem(userId, todoId);
+}
+
+export async function createAttachmentPresignedUrl(
+    todoId: string
+): Promise<string> {
+    logger.info('Create Attachment Presigned URL');
+    const uploadUrl = await attachmentUtils.getUploadUrl(todoId);
+    return uploadUrl;
+}
